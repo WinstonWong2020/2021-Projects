@@ -1,1 +1,54 @@
+---
+title: "Corn Kernel Color Quantification"
+author: "Winston Wong"
+date: "4/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's first plot the colors contained within the image, so we can get an idea of what colors there are. We do this by using the 'plotPixels()' function from the 'colordistance package'. 'n' represents the number of randomly selected pixels to plot.
+
+```{r}
+library(colordistance)
+
+plotPixels("Illini Popcorn.jpg", lower = NULL, upper = NULL, n = 5000)
+```
+
+I used a picture containing the official University of Illinois at Urbana-Champaign "orange" to get the exact RGB values so we can compare it to the kernels.
+
+```{r}
+kmeans.clusters.orange <- getKMeanColors("Illini Popcorn.jpg", n = 3, plotting = TRUE)
+extractClusters(kmeans.clusters.orange)
+```
+
+We can use the RGB values from our "standard orange" to define our color ranges.
+
+```{r}
+center.spherical <- c(0.90, 0.29, 0.15)
+```
+
+Now it's time to see what amount of pixels correspond to the official UIUC orange within a 15% radius of the center we specified before ('center.spherical'). This radius was determined by testing different values in order to exclude colors that were too red, blue, etc. The line of code 'illini.popcorn.spherical$img.fraction' returns the proportion of kernels that are within the 15% color radius. This could be used for phenotyping although you would have to standardize the image.
+
+```{r}
+
+#Read the image into the R environment
+illini.popcorn <- jpeg::readJPEG("Illini Popcorn.jpg")
+
+# Find all the pixels within a 15% radius
+illini.popcorn.spherical <- countcolors::sphericalRange(illini.popcorn, center = center.spherical, radius = 0.15, color.pixels = FALSE, plotting = TRUE); names(illini.popcorn.spherical)
+
+illini.popcorn.spherical$img.fraction
+
+```
+
+
+If you have many images you can use the 'countColorsInDirectory' function to cycle through them within a specified folder. It looks like the 15% radius setting works well. This value excludes the kernels that are too red while capturing kernels that are sufficiently orange. 
+
+```{r}
+countcolors::countColorsInDirectory("C:/Users/winst/Desktop/2021 Projects/CornKernel" ,center = center.spherical, radius = 0.15, plotting = TRUE, target.color = "green")
+```
+
 
