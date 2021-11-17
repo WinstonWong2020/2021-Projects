@@ -1,0 +1,116 @@
+---
+title: "Deforestation"
+author: "Winston Wong"
+date: "11/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#library(ggplot2)
+#library(gganimate)
+library(tidyr)
+library(dplyr)
+library(plotly)
+#library(gapminder)
+```
+
+__forest.csv__
+
+Loading the Data
+```{r}
+forest <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/forest.csv')
+```
+
+```{r}
+brazil_loss <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/brazil_loss.csv')
+```
+
+```{r}
+data <- select(brazil_loss, c("year", "commercial_crops", "pasture", "selective_logging", "fire", "mining"))
+```
+
+```{r}
+colnames(data)<- c("year", "Commercial_Crops","Pasture", "Selective_Logging", "Fire", "Mining")h
+```
+
+```{r}
+fig <- pivot_longer(data, cols = 2:6, names_to="CauseofDeforestation" )
+```
+
+```{r}
+accumulate_by <- function(dat, var) {
+  var <- lazyeval::f_eval(var, dat)
+  lvls <- plotly:::getLevels(var)
+  dats <- lapply(seq_along(lvls), function(x) {
+    cbind(dat[var %in% lvls[seq(1, x)], ], frame = lvls[[x]])
+  })
+  dplyr::bind_rows(dats)
+}
+
+fig <- fig %>% accumulate_by(~year)
+```
+
+```{r}
+tt <- list(
+  family = "Arial",
+  size = 22,
+  color = "Black")
+```
+
+```{r}
+fig <- fig %>%
+  plot_ly(
+    x = ~year, 
+    y = ~value,
+    split = ~CauseofDeforestation,
+    frame = ~frame, 
+    type = 'scatter',
+    mode = 'lines', 
+    line = list(simplyfy = F)
+  )
+
+```
+
+```{r}
+fig <- fig %>% layout(
+  title = list(text='<b>Annual Deforestation in Brazil</b>', font = tt),
+  xaxis = list(
+    title = "<b>Year (2001-2013)</b>",
+    zeroline = F,
+    dtick = 1,
+    tick0 = 2001, 
+    tickmode = "linear", 
+    tickangle = "45"
+  ),
+  yaxis = list(
+    title = "<b>Deforestation Area (Hectares)</b>",
+    zeroline = F,
+    dtick = 250000, 
+    tick0= 0, 
+    tickmode= "linear"),
+  legend = list( x= 0.7, y = 0.9,
+    title=list(text="Cause of Deforestation"))
+  ) 
+```
+
+```{r}
+fig <- fig %>% animation_opts(
+  frame = 100, 
+  transition = 99, 
+  redraw = FALSE
+)
+fig <- fig %>% animation_slider(
+  hide = T
+)
+fig <- fig %>% animation_button(
+  x = 0.85, xanchor = "right", y = 0.5, yanchor = "bottom"
+)
+
+```
+
+
+
