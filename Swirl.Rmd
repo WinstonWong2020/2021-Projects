@@ -1,0 +1,98 @@
+---
+title: "Swirl"
+author: "Winston Wong"
+date: "10/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+"11/1/2021: Finished Sequences of Numbers module and 2 problems from Basic R Exercises"
+"11/2/2021: Finished `Vectors` module and Missing values module"
+"11/3/2021: Finished `Subsetting Vectors` and 2 problems from Basic R Exercises"
+"11/4/2021: Finished Matrices and Data Frames module, and Logic module, and 1 problem from Basic R Exercises"
+"11/5/2021: Attempted to understand the sieve of Eursthanese problem, and worked on Functions module in Swirl"
+"11/6/2021: Finished Functions module"
+"11/8/2021: Worked on one problem from Basic R Exercises"
+"11/9/2021: Finished lapply and sapply module"
+"11/11/2021: Finished vapply and tapply module"
+```
+
+```{r}
+"Write a R program to extract first 10 english letter in lower case and last 10 letters in upper case and extract letters between 22nd to 24th letters in upper case."
+
+alphabet <- c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o",
+              "p","q","r","s","t","u","v","w","x","y","z")
+
+alphabet[1] <- "a"
+
+for (i in 1:26){
+  if (i == 23){
+    print("23rd letter in uppercase")
+    print(toupper(alphabet[23]))
+  }
+  else if (i == 17:26){
+    print("Last 10 letters in uppercase")
+    print(toupper(alphabet[17:26]))
+  }
+  else if (i == 1:10){
+    print("First 10 letters in uppercase")
+    print(tolower(alphabet[1:10]))
+  }
+}
+
+
+```
+
+
+```{r}
+"Write a R program to get all prime numbers up to a given number (based on the sieve of Eratosthenes)."
+
+prime_numbers <- function(n) {
+if (n >= 2) {
+ x = seq(2, n)                                  #Generate sequence from 2:n
+ prime_nums = c()
+ for (i in seq(2, n)) {                         #For any number inside 2:n...
+ if (any(x == i)) {                             #If any number inside 2:n equals i, then...
+ prime_nums = c(prime_nums, i)                  #Combine existing prime_nums with i, and...
+ x = c(x[(x %% i) != 0], i)                     
+ }
+ }
+ return(prime_nums)
+ }
+ else 
+ {
+ stop("Input number should be at least 2.")
+ }
+ } 
+```
+
+```{r}
+"Write a R program to create three vectors a,b,c with 3 integers. Combine the three vectors to become a 3×3 matrix where each column represents a vector. Print the content of the matrix."
+
+a <- c(1,2,3)
+b <- c(4,5,6)
+c <- c(7,8,9)
+
+cvec <- c(a,b,c)
+cvec_matrix <- matrix(cvec, nrow =3)
+colnames(cvec_matrix) <- c("a","b","c")
+```
+
+You can exit swirl and return to the R prompt (>) at any time by pressing the Esc
+| key. If you are already at the prompt, type bye() to exit and save your progress.
+| When you exit properly, you'll see a short message letting you know you've done so.
+
+| When you are at the R prompt (>):
+| -- Typing skip() allows you to skip the current question.
+| -- Typing play() lets you experiment with R on your own; swirl will ignore what you
+| do...
+| -- UNTIL you type nxt() which will regain swirl's attention.
+| -- Typing bye() causes swirl to exit. Your progress will be saved.
+| -- Typing main() returns you to swirl's main menu.
+| -- Typing info() displays these options again.
+
+
